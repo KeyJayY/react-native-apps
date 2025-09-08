@@ -7,6 +7,8 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
+import { StatusBar } from 'react-native';
+import { Platform } from 'react-native';
 
 const { width: phoneWidth, height: phoneHeight } = Dimensions.get('window');
 
@@ -25,7 +27,7 @@ const TrackableButton = ({ id, title, onPress, ws }: TrackableButtonProps) => {
       cb({
         id,
         x: x / phoneWidth - 0.5,
-        y: y / phoneHeight - 0.5,
+        y: (y + (StatusBar.currentHeight ?? 0)) / phoneHeight - 0.5,
         width: width / phoneWidth,
         height: height / phoneHeight,
       });
