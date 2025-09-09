@@ -1,5 +1,5 @@
-import React from "react";
-import { useState, useRef, useEffect } from "react";
+import React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Image,
   Pressable,
@@ -7,27 +7,27 @@ import {
   ScrollView,
   StyleSheet,
   View,
-} from "react-native";
-import { preview } from "radon-ide";
-import { AutomatedTests } from "./automatedTests";
-import { Platform } from "react-native";
+} from 'react-native';
+import { preview } from 'radon-ide';
+import { AutomatedTests } from './automatedTests';
+import { Platform } from 'react-native';
 
-import { Button } from "./Button";
-import { gap, useScheme } from "./Colors";
-import { Text } from "./Text";
+import { Button } from './Button';
+import { gap, useScheme } from './Colors';
+import { Text } from './Text';
 
 preview(
   <Button
     title="Button"
     onPress={() => {
-      console.log("console.log()");
+      console.log('console.log()');
     }}
-  />
+  />,
 );
 
 function printLogs() {
   // put breakpoint on the next line
-  const text = "console.log()";
+  const text = 'console.log()';
   console.log(text);
 }
 
@@ -37,14 +37,14 @@ export function MainScreen() {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const host = Platform.OS === "ios" ? "localhost" : "10.0.2.2";
+    const host = Platform.OS === 'ios' ? 'localhost' : '10.0.2.2';
     ws.current = new WebSocket(`ws://${host}:8080`);
     ws.current.onopen = () => {
-      console.log("Connected to server");
+      console.log('Connected to server');
       setConnected(true);
     };
-    ws.current.addEventListener("message", (e) => {
-      console.log("server message", e.data);
+    ws.current.addEventListener('message', e => {
+      console.log('server message', e.data);
     });
   }, []);
 
@@ -75,7 +75,7 @@ export function MainScreen() {
           <Step
             label="Check uncaught exceptions"
             onPress={() => {
-              const tryToTrow = "expected error";
+              const tryToTrow = 'expected error';
               throw new Error(tryToTrow);
             }}
           >
@@ -86,9 +86,9 @@ export function MainScreen() {
             label="Fetch request visible in network panel"
             onPress={async () => {
               const response = await fetch(
-                "https://pokeapi.co/api/v2/pokemon/ditto"
+                'https://pokeapi.co/api/v2/pokemon/ditto',
               );
-              console.log("Response", response);
+              console.log('Response', response);
             }}
           >
             Activate network panel, click button and see if fetch request is
@@ -132,9 +132,9 @@ type StepProps = {
 function Step({ label, onPress, children }: StepProps) {
   const [expand, setExpand] = useState(false);
 
-  let content = <Text>{"• " + label}</Text>;
+  let content = <Text>{'• ' + label}</Text>;
   if (onPress) {
-    content = <Button inline title={"• " + label} onPress={onPress} />;
+    content = <Button inline title={'• ' + label} onPress={onPress} />;
   }
 
   return (
@@ -143,7 +143,7 @@ function Step({ label, onPress, children }: StepProps) {
         {content}
         <ExpandArrow
           expanded={expand}
-          onPress={() => setExpand((expanded) => !expanded)}
+          onPress={() => setExpand(expanded => !expanded)}
         />
       </View>
       {expand && <Text style={stepStyle.description}>{children}</Text>}
@@ -151,7 +151,7 @@ function Step({ label, onPress, children }: StepProps) {
   );
 }
 const stepStyle = StyleSheet.create({
-  row: { flexDirection: "row", justifyContent: "space-between" },
+  row: { flexDirection: 'row', justifyContent: 'space-between' },
   description: { marginLeft: gap * 2, fontSize: 12 },
 });
 
@@ -159,8 +159,8 @@ function Logo() {
   return (
     <View style={{ marginHorizontal: gap * 3 }}>
       <Image
-        source={require("./assets/radon.png")}
-        style={{ width: "100%", height: 200, objectFit: "contain" }}
+        source={require('./assets/radon.png')}
+        style={{ width: '100%', height: 200, objectFit: 'contain' }}
       />
     </View>
   );
@@ -174,7 +174,7 @@ function ExpandArrow({ expanded, onPress }: ExpandArrowProps) {
   const style = useExpandArrowStyle();
   return (
     <Pressable onPress={onPress} style={style.container}>
-      <Text style={style.text}>{expanded ? "↑" : "↓"}</Text>
+      <Text style={style.text}>{expanded ? '↑' : '↓'}</Text>
     </Pressable>
   );
 }
@@ -182,7 +182,7 @@ function useExpandArrowStyle() {
   const { colors, gap } = useScheme();
 
   return StyleSheet.create({
-    container: { paddingHorizontal: gap, justifyContent: "center" },
+    container: { paddingHorizontal: gap, justifyContent: 'center' },
     text: { color: colors.text },
   });
 }
