@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect } from 'react';
 import {
   View,
   Button,
@@ -6,11 +6,11 @@ import {
   Pressable,
   Text,
   StyleSheet,
-} from "react-native";
-import { StatusBar } from "react-native";
-import { Platform } from "react-native";
+} from 'react-native';
+import { StatusBar } from 'react-native';
+import { Platform } from 'react-native';
 
-const { width: phoneWidth, height: phoneHeight } = Dimensions.get("window");
+const { width: phoneWidth, height: phoneHeight } = Dimensions.get('window');
 
 type TrackableButtonProps = {
   id: string;
@@ -36,9 +36,9 @@ const TrackableButton = ({ id, title, onPress, ws }: TrackableButtonProps) => {
 
   useEffect(() => {
     if (!ws) return;
-    ws.addEventListener("message", (e: any) => {
+    ws.addEventListener('message', (e: any) => {
       if (e.data === `getPosition:${id}`) {
-        measure((pos) => {
+        measure(pos => {
           ws.send(JSON.stringify(pos));
         });
       }
@@ -62,9 +62,9 @@ const TrackableButton = ({ id, title, onPress, ws }: TrackableButtonProps) => {
 const styles = StyleSheet.create({
   button: {
     padding: 10,
-    backgroundColor: "#5bf",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#5bf',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

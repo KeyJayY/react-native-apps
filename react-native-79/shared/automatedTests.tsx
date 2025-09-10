@@ -25,6 +25,7 @@ function printLogs() {
 
 export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
   const style = useStyle();
+  const [elementVisible, setElementVisible] = useState(true);
 
   return (
     <View
@@ -60,6 +61,24 @@ export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
               "https://pokeapi.co/api/v2/pokemon/ditto"
             );
             console.log("Response", response);
+          }}
+        />
+        <TrackableButton
+          ws={ws}
+          id="toggle-element-button"
+          title="Toggle element visibility"
+          onPress={() => {
+            console.log("Toggling element visibility");
+            setElementVisible((prev) => !prev);
+          }}
+        />
+        <View
+          style={{
+            marginTop: 20,
+            width: 100,
+            height: 100,
+            backgroundColor: "red",
+            display: elementVisible ? "flex" : "none",
           }}
         />
       </View>
