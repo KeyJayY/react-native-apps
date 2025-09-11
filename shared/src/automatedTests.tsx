@@ -47,11 +47,11 @@ export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
     if (!ws) return;
     ws.addEventListener("message", (e: any) => {
       if (e.data === `getColorScheme`) {
-        ws.send(JSON.stringify(getColorScheme()));
+        ws.send(JSON.stringify({ value: getColorScheme() }));
       } else if (e.data === `getOrientation`) {
-        ws.send(JSON.stringify(getOrientation()));
+        ws.send(JSON.stringify({ value: getOrientation() }));
       } else if (e.data === `getFontSize`) {
-        ws.send(JSON.stringify(getFontSize()));
+        ws.send(JSON.stringify({ value: getFontSize() }));
       }
     });
   }, [ws]);
