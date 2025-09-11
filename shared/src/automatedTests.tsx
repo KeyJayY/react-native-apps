@@ -7,6 +7,9 @@ import { Button } from "./Button";
 import { useScheme } from "./Colors";
 import TrackableButton from "./TrackableButton";
 import { Platform } from "react-native";
+import { Appearance, useColorScheme } from "react-native";
+import { Dimensions } from "react-native";
+import { PixelRatio } from "react-native";
 
 preview(
   <Button
@@ -17,15 +20,41 @@ preview(
   />
 );
 
-function printLogs() {
+async function printLogs() {
   // put breakpoint on the next line
   const text = "console.log()";
   console.log(text);
 }
 
+function getColorScheme() {
+  return Appearance.getColorScheme();
+}
+
+function getOrientation() {
+  const { width, height } = Dimensions.get("window");
+  return width > height ? "landscape" : "portrait";
+}
+
+function getFontSize() {
+  return PixelRatio.getFontScale();
+}
+
 export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
   const style = useStyle();
   const [elementVisible, setElementVisible] = useState(true);
+
+  useEffect(() => {
+    if (!ws) return;
+    ws.addEventListener("message", (e: any) => {
+      if (e.data === `getColorScheme`) {
+        ws.send(JSON.stringify(getColorScheme()));
+      } else if (e.data === `getOrientation`) {
+        ws.send(JSON.stringify(getOrientation()));
+      } else if (e.data === `getFontSize`) {
+        ws.send(JSON.stringify(getFontSize()));
+      }
+    });
+  }, [ws]);
 
   return (
     <View style={style.mainContainer}>
