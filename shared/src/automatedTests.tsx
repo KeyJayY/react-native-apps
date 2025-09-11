@@ -46,12 +46,13 @@ export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
   useEffect(() => {
     if (!ws) return;
     ws.addEventListener("message", (e: any) => {
-      if (e.data === `getColorScheme`) {
-        ws.send(JSON.stringify({ value: getColorScheme() }));
-      } else if (e.data === `getOrientation`) {
-        ws.send(JSON.stringify({ value: getOrientation() }));
-      } else if (e.data === `getFontSize`) {
-        ws.send(JSON.stringify({ value: getFontSize() }));
+      const message = JSON.parse(e.data);
+      if (message.message === `getColorScheme`) {
+        ws.send(JSON.stringify({ value: getColorScheme(), id: message.id }));
+      } else if (message.message === `getOrientation`) {
+        ws.send(JSON.stringify({ value: getOrientation(), id: message.id }));
+      } else if (message.message === `getFontSize`) {
+        ws.send(JSON.stringify({ value: getFontSize(), id: message.id }));
       }
     });
   }, [ws]);
