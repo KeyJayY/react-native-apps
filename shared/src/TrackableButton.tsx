@@ -37,9 +37,10 @@ const TrackableButton = ({ id, title, onPress, ws }: TrackableButtonProps) => {
   useEffect(() => {
     if (!ws) return;
     ws.addEventListener("message", (e: any) => {
-      if (e.data === `getPosition:${id}`) {
+      const message = JSON.parse(e.data);
+      if (message.message === `getPosition:${id}`) {
         measure((pos) => {
-          ws.send(JSON.stringify(pos));
+          ws.send(JSON.stringify({ position: pos, id: message.id }));
         });
       }
     });
