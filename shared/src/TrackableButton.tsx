@@ -26,8 +26,8 @@ const TrackableButton = ({ id, title, onPress, ws }: TrackableButtonProps) => {
     ref.current?.measureInWindow((x, y, width, height) => {
       cb({
         id,
-        x: x / phoneWidth - 0.5,
-        y: (y + (StatusBar.currentHeight ?? 0)) / phoneHeight - 0.5,
+        x: x / phoneWidth,
+        y: (y + (StatusBar.currentHeight ?? 0)) / phoneHeight,
         width: width / phoneWidth,
         height: height / phoneHeight,
       });
