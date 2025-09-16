@@ -7,7 +7,7 @@ import { Button } from "./Button";
 import { useScheme } from "./Colors";
 import TrackableButton from "./TrackableButton";
 import { Platform } from "react-native";
-import { Appearance, useColorScheme } from "react-native";
+import { Appearance, useColorScheme, AppState } from "react-native";
 import { Dimensions } from "react-native";
 import { PixelRatio } from "react-native";
 
@@ -39,6 +39,10 @@ function getFontSize() {
   return PixelRatio.getFontScale();
 }
 
+function getAppState() {
+  return AppState.currentState;
+}
+
 export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
   const style = useStyle();
   const [elementVisible, setElementVisible] = useState(true);
@@ -53,6 +57,8 @@ export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
         ws.send(JSON.stringify({ value: getOrientation(), id: message.id }));
       } else if (message.message === `getFontSize`) {
         ws.send(JSON.stringify({ value: getFontSize(), id: message.id }));
+      } else if (message.message === `getAppState`) {
+        ws.send(JSON.stringify({ value: getAppState(), id: message.id }));
       }
     });
   }, [ws]);
