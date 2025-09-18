@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { StatusBar } from "react-native";
 import { Platform } from "react-native";
+import { getWebSocket } from "./websocket";
 
 const { width: phoneWidth, height: phoneHeight } = Dimensions.get("window");
 
@@ -16,11 +17,11 @@ type TrackableButtonProps = {
   id: string;
   title: string;
   onPress?: (id: string) => void;
-  ws: any;
 };
 
-const TrackableButton = ({ id, title, onPress, ws }: TrackableButtonProps) => {
+const TrackableButton = ({ id, title, onPress }: TrackableButtonProps) => {
   const ref = useRef<View>(null);
+  const ws = getWebSocket();
 
   const measure = (cb: (data: any) => void) => {
     ref.current?.measureInWindow((x, y, width, height) => {
@@ -51,7 +52,7 @@ const TrackableButton = ({ id, title, onPress, ws }: TrackableButtonProps) => {
       style={styles.button}
       ref={ref}
       onPress={() => {
-        ws.send(`{"action":"${id}"}`);
+        ws?.send(`{"action":"${id}"}`);
         onPress?.(id);
       }}
     >

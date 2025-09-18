@@ -7,6 +7,9 @@ import { Button } from './Button';
 import { useScheme } from './Colors';
 import TrackableButton from './TrackableButton';
 import { Platform } from 'react-native';
+import { Appearance, useColorScheme, AppState } from 'react-native';
+import { Dimensions } from 'react-native';
+import { PixelRatio } from 'react-native';
 
 preview(
   <Button
@@ -17,78 +20,116 @@ preview(
   />,
 );
 
-function printLogs() {
+async function printLogs() {
   // put breakpoint on the next line
   const text = 'console.log()';
   console.log(text);
 }
 
-export function MainScreen() {
+function getColorScheme() {
+  return Appearance.getColorScheme();
+}
+
+function getOrientation() {
+  const { width, height } = Dimensions.get('window');
+  return width > height ? 'landscape' : 'portrait';
+}
+
+function getFontSize() {
+  return PixelRatio.getFontScale();
+}
+
+function getAppState() {
+  return AppState.currentState;
+}
+
+export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
   const style = useStyle();
-  const ws = useRef<WebSocket | null>(null);
-  const [connected, setConnected] = useState(false);
+  const [elementVisible, setElementVisible] = useState(true);
 
   useEffect(() => {
-    const host = Platform.OS === 'ios' ? 'localhost' : '10.0.2.2';
-    ws.current = new WebSocket(`ws://${host}:8080`);
-    ws.current.onopen = () => {
-      console.log('Connected to server');
-      setConnected(true);
-    };
-    ws.current.addEventListener('message', e => {
-      console.log('server message', e.data);
+    if (!ws) return;
+    ws.addEventListener('message', (e: any) => {
+      const message = JSON.parse(e.data);
+      if (message.message === `getColorScheme`) {
+        ws.send(JSON.stringify({ value: getColorScheme(), id: message.id }));
+      } else if (message.message === `getOrientation`) {
+        ws.send(JSON.stringify({ value: getOrientation(), id: message.id }));
+      } else if (message.message === `getFontSize`) {
+        ws.send(JSON.stringify({ value: getFontSize(), id: message.id }));
+      } else if (message.message === `getAppState`) {
+        ws.send(JSON.stringify({ value: getAppState(), id: message.id }));
+      }
     });
-  }, []);
+  }, [ws]);
 
   return (
-    <>
-      {connected && (
+    <View style={style.mainContainer}>
+      <View style={style.container}>
+        <TrackableButton
+          ws={ws}
+          id="console-log-button"
+          title="Test console logs and breakpoints"
+          onPress={printLogs}
+        />
+        <TrackableButton
+          ws={ws}
+          id="uncaught-exception-button"
+          title="Check uncaught exceptions"
+          onPress={() => {
+            const tryToThrow = 'expected error';
+            throw new Error(tryToThrow);
+          }}
+        />
+        <TrackableButton
+          ws={ws}
+          id="fetch-request-button"
+          title="Fetch request visible in network panel"
+          onPress={async () => {
+            const response = await fetch(
+              'https://pokeapi.co/api/v2/pokemon/ditto',
+            );
+            console.log('Response', response);
+          }}
+        />
+        <TrackableButton
+          ws={ws}
+          id="toggle-element-button"
+          title="Toggle element visibility"
+          onPress={() => {
+            console.log('Toggling element visibility');
+            setElementVisible(prev => !prev);
+          }}
+        />
         <View
           style={{
-            display: 'flex',
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
+            marginTop: 20,
+            width: 50,
+            height: 50,
+            backgroundColor: 'red',
+            display: elementVisible ? 'flex' : 'none',
+            margin: 'auto',
           }}
-        >
-          <View style={style.container}>
-            <TrackableButton
-              ws={ws}
-              id="console-log-button"
-              title="Test console logs and breakpoints"
-              onPress={printLogs}
-            />
-            <TrackableButton
-              ws={ws}
-              id="uncaught-exception-button"
-              title="Check uncaught exceptions"
-              onPress={() => {
-                const tryToThrow = 'expected error';
-                throw new Error(tryToThrow);
-              }}
-            />
-            <TrackableButton
-              ws={ws}
-              id="fetch-request-button"
-              title="Fetch request visible in network panel"
-              onPress={async () => {
-                const response = await fetch(
-                  'https://pokeapi.co/api/v2/pokemon/ditto',
-                );
-                console.log('Response', response);
-              }}
-            />
-          </View>
-        </View>
-      )}
-    </>
+        />
+      </View>
+    </View>
   );
 }
 
 function useStyle() {
   const { gap, colors } = useScheme();
   return StyleSheet.create({
-    container: { gap: gap, backgroundColor: colors.background },
+    mainContainer: {
+      display: 'flex',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.background,
+    },
+    container: {
+      gap: gap,
+      backgroundColor: colors.background,
+    },
     stepContainer: { gap, marginHorizontal: gap * 4 },
   });
 }

@@ -10,6 +10,15 @@ import { Platform } from "react-native";
 import { Appearance, useColorScheme, AppState } from "react-native";
 import { Dimensions } from "react-native";
 import { PixelRatio } from "react-native";
+import { getWebSocket } from "./websocket";
+
+let useRouter: (() => { push: (path: string) => void }) | null = null;
+
+try {
+  useRouter = require("expo-router").useRouter;
+} catch (e) {
+  useRouter = null;
+}
 
 preview(
   <Button
@@ -43,9 +52,11 @@ function getAppState() {
   return AppState.currentState;
 }
 
-export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
+export function AutomatedTests() {
   const style = useStyle();
   const [elementVisible, setElementVisible] = useState(true);
+  const ws = getWebSocket();
+  const router = useRouter ? useRouter() : null;
 
   useEffect(() => {
     if (!ws) return;
@@ -67,13 +78,11 @@ export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
     <View style={style.mainContainer}>
       <View style={style.container}>
         <TrackableButton
-          ws={ws}
           id="console-log-button"
           title="Test console logs and breakpoints"
           onPress={printLogs}
         />
         <TrackableButton
-          ws={ws}
           id="uncaught-exception-button"
           title="Check uncaught exceptions"
           onPress={() => {
@@ -82,7 +91,6 @@ export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
           }}
         />
         <TrackableButton
-          ws={ws}
           id="fetch-request-button"
           title="Fetch request visible in network panel"
           onPress={async () => {
@@ -93,12 +101,21 @@ export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
           }}
         />
         <TrackableButton
-          ws={ws}
           id="toggle-element-button"
           title="Toggle element visibility"
           onPress={() => {
             console.log("Toggling element visibility");
             setElementVisible((prev) => !prev);
+          }}
+        />
+        <TrackableButton
+          id="toggle-element-button"
+          title="expo-router (do nothning if app is not expo)"
+          onPress={() => {
+            console.log("Toggling element visibility");
+            if (router) {
+              router.push("/explore");
+            }
           }}
         />
         <View

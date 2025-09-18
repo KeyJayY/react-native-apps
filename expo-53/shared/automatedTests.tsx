@@ -7,6 +7,18 @@ import { Button } from "./Button";
 import { useScheme } from "./Colors";
 import TrackableButton from "./TrackableButton";
 import { Platform } from "react-native";
+import { Appearance, useColorScheme, AppState } from "react-native";
+import { Dimensions } from "react-native";
+import { PixelRatio } from "react-native";
+import { getWebSocket } from "./websocket";
+
+let useRouter: (() => { push: (path: string) => void }) | null = null;
+
+try {
+  useRouter = require("expo-router").useRouter;
+} catch (e) {
+  useRouter = null;
+}
 
 preview(
   <Button
@@ -17,27 +29,60 @@ preview(
   />
 );
 
-function printLogs() {
+async function printLogs() {
   // put breakpoint on the next line
   const text = "console.log()";
   console.log(text);
 }
 
-export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
+function getColorScheme() {
+  return Appearance.getColorScheme();
+}
+
+function getOrientation() {
+  const { width, height } = Dimensions.get("window");
+  return width > height ? "landscape" : "portrait";
+}
+
+function getFontSize() {
+  return PixelRatio.getFontScale();
+}
+
+function getAppState() {
+  return AppState.currentState;
+}
+
+export function AutomatedTests() {
   const style = useStyle();
   const [elementVisible, setElementVisible] = useState(true);
+  const ws = getWebSocket();
+  const router = useRouter ? useRouter() : null;
+
+  useEffect(() => {
+    if (!ws) return;
+    ws.addEventListener("message", (e: any) => {
+      const message = JSON.parse(e.data);
+      if (message.message === `getColorScheme`) {
+        ws.send(JSON.stringify({ value: getColorScheme(), id: message.id }));
+      } else if (message.message === `getOrientation`) {
+        ws.send(JSON.stringify({ value: getOrientation(), id: message.id }));
+      } else if (message.message === `getFontSize`) {
+        ws.send(JSON.stringify({ value: getFontSize(), id: message.id }));
+      } else if (message.message === `getAppState`) {
+        ws.send(JSON.stringify({ value: getAppState(), id: message.id }));
+      }
+    });
+  }, [ws]);
 
   return (
     <View style={style.mainContainer}>
       <View style={style.container}>
         <TrackableButton
-          ws={ws}
           id="console-log-button"
           title="Test console logs and breakpoints"
           onPress={printLogs}
         />
         <TrackableButton
-          ws={ws}
           id="uncaught-exception-button"
           title="Check uncaught exceptions"
           onPress={() => {
@@ -46,7 +91,6 @@ export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
           }}
         />
         <TrackableButton
-          ws={ws}
           id="fetch-request-button"
           title="Fetch request visible in network panel"
           onPress={async () => {
@@ -57,12 +101,21 @@ export function AutomatedTests({ ws }: { ws: WebSocket | null }) {
           }}
         />
         <TrackableButton
-          ws={ws}
           id="toggle-element-button"
           title="Toggle element visibility"
           onPress={() => {
             console.log("Toggling element visibility");
             setElementVisible((prev) => !prev);
+          }}
+        />
+        <TrackableButton
+          id="toggle-element-button"
+          title="expo-router (do nothning if app is not expo)"
+          onPress={() => {
+            console.log("Toggling element visibility");
+            if (router) {
+              router.push("/explore");
+            }
           }}
         />
         <View
