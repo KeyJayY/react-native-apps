@@ -109,8 +109,8 @@ export function AutomatedTests() {
           }}
         />
         <TrackableButton
-          id="toggle-element-button"
-          title="expo-router (do nothning if app is not expo)"
+          id="expo-route-explore-button"
+          title="expo-router (do nothing if app is not expo)"
           onPress={() => {
             console.log("Toggling element visibility");
             if (router) {
