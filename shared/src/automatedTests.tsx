@@ -21,11 +21,10 @@ try {
 }
 
 preview(
-  <Button
-    title="Button"
-    onPress={() => {
-      console.log("console.log()");
-    }}
+  <TrackableButton
+    id="preview-button"
+    title="preview button"
+    onPress={printLogs}
   />
 );
 
