@@ -7,7 +7,7 @@ export default function ModalScreen() {
   return (
     <View style={styles.container}>
       <TrackableButton
-        id="modal"
+        id="modal-button"
         title="Modal Button"
         onPress={() => {
           console.log("modal-button");

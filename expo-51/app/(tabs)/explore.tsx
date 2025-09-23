@@ -1,8 +1,3 @@
-import { useScheme } from "@/shared/Colors";
-import { View } from "react-native";
+import SecondView from "@/shared/SecondView";
 
-export default function TabTwoScreen() {
-  const { colors } = useScheme();
-
-  return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
-}
+export default SecondView;

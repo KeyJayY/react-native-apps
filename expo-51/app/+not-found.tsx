@@ -1,3 +1,3 @@
-import { NotFoundScreen } from "@/shared/navigation/NotFound";
+import NotFoundView from "@/shared/NotFoundView";
 
-export default NotFoundScreen;
+export default NotFoundView;

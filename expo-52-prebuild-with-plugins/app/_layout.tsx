@@ -43,7 +43,7 @@ function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="modal"
-          options={{ presentation: "modal", title: "Modal" }}
+          options={{ presentation: "fullScreenModal", title: "Modal" }}
         />
         <Stack.Screen name="+not-found" />
       </Stack>
