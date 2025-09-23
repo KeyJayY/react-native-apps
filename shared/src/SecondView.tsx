@@ -25,6 +25,14 @@ export default function SecondView() {
         }}
       />
       <TrackableButton
+        id="show-modal-button"
+        title="Show Modal"
+        onPress={() => {
+          console.log("show-modal-button");
+          router.push("/modal");
+        }}
+      />
+      <TrackableButton
         id="return-to-home-button"
         title="Return to Home"
         onPress={() => {
