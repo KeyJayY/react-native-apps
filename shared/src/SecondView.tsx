@@ -17,6 +17,14 @@ export default function SecondView() {
         }}
       />
       <TrackableButton
+        id="not-found-button"
+        title="Return to Home"
+        onPress={() => {
+          console.log("not-found-button");
+          router.push("/notExisting");
+        }}
+      />
+      <TrackableButton
         id="return-to-home-button"
         title="Return to Home"
         onPress={() => {
