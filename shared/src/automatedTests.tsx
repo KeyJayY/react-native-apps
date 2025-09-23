@@ -23,7 +23,7 @@ try {
 preview(
   <TrackableButton
     id="preview-button"
-    title="preview button"
+    title="Preview Button"
     onPress={printLogs}
   />
 );
